@@ -1,0 +1,38 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "strict": true,
+    "baseUrl": "./",
+    "paths": {
+      "*": [
+        "src/",
+        "node_modules/"
+      ]
+    },
+    "outDir": "build",
+    "sourceMap": true,
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "target": "esnext",
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": [
+      "node",
+      "jest"
+    ],
+    "lib": ["es2020", "dom", "esnext"]
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.d.ts",
+  ],
+  "exclude": [
+    "./src/__tests__",
+    "./src/setup-tests.ts",
+    "./src/load-vars.ts",
+  ]
+}
