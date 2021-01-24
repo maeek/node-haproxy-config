@@ -1,0 +1,168 @@
+import Config from '../Config';
+import SectionException from '../errors/Section';
+import Collection from './Collection';
+import Option from './Option';
+
+interface Children {
+  [key: string]: Option;
+}
+
+export class Section {
+  name: string;
+  type: string;
+  parent?: Collection | Config;
+  private children: Children = {};
+
+  constructor(type: string, name: string, options: Option[] = []) {
+    this.type = type;
+    this.name = name;
+
+    this.addItems(...options);
+  }
+
+  get option(): Children {
+    this.isInitialized();
+
+    return this.children;
+  }
+
+  get collection(): Option[] {
+    this.isInitialized();
+
+    return Object.values(this.children);
+  }
+
+  get names(): string[] {
+    this.isInitialized();
+
+    return Object.keys(this.children);
+  }
+
+  get json(): string {
+    return '';
+    // return this._getOutput('json');
+  }
+
+  get yaml(): string {
+    return '';
+    // return this._getOutput('yaml');
+  }
+
+  get raw(): string {
+    this.isInitialized();
+    
+    let result = `${this.type}${this.type !== this.name ? ` ${this.name}` : ''}\n`;
+    
+    this.collection.forEach((option: Option) => {
+      result += option.raw;
+      result += '\n';
+    });
+
+    result += '\n';
+
+    return result;
+  }
+
+  // private _getOutput(type: 'json' | 'yaml' | 'raw'): string {
+  //   this.isInitialized();
+    
+  //   let result = `${this.type}${this.type !== this.name ? ' ' + this.name : ''}\n`;
+    
+  //   this.collection.forEach((option: Option) => {
+  //     result += option[type];
+  //     result += '\n';
+  //   });
+    
+  //   return result;
+  // }
+  
+  isInitialized(): void {
+    if (!this.type || !this.name)
+      throw new SectionException.Uninitialized();
+  }
+
+  static from(str: string): Section {
+    // Clean str
+    const values = str.split('\n');
+    const {name, type} = Section._parseHeader(values[0]);
+
+    return new Section(type, name);
+  }
+
+  static _parseHeader(str: string): { name: string, type: string } {
+    const values = str.split(' ');
+
+    if (values.length !== 2) throw new SectionException.MalformedInput();
+
+    const [type, name] = values;
+    const result = {
+      type,
+      name
+    };
+
+    return result;
+  }
+
+  static _parseOptions(str: string[]): Children {
+    const result: Children = {};
+
+    str.forEach((row: string) => {
+      const opt = Option.from(row);
+      opt.parent = this as unknown as Section;
+      result[opt.name] = opt;
+    });
+
+    return result;
+  }
+
+  addItems(...options: Option[]): Section {
+    this.isInitialized();
+
+    options.forEach((option: Option) => {
+      if (!(option instanceof Option)) throw new SectionException.UnsupportedType();
+      if (option.unique && this.children[option.name]) throw new SectionException.TwoSameOptionsCannotCoexist();
+      option.isInitialized();
+
+      option.parent = this;
+      this.children[option.name] = option;
+    });
+
+    return this;
+  }
+
+  removeItems(...options: Option[]): Section {
+    this.isInitialized();
+
+    options.forEach((option: Option) => {
+      this.children[option.name].parent = undefined;
+      delete this.children[option.name];
+    });
+
+    return this;
+  }
+
+  remove(): void {
+    if (this.parent) {
+      this.parent.removeItems(this);
+    } else {
+      throw new SectionException.NotParented();
+    }
+  }
+
+  toString(): string {
+    return this.raw;
+  }
+
+  rename(newName: string): Section {
+    this.isInitialized();
+
+    if (newName.length === 0) throw new SectionException.InvalidName();
+    if (newName.includes(' ')) throw new SectionException.InvalidName();
+
+    this.name = newName;
+
+    return this;
+  }
+}
+
+export default Section;
