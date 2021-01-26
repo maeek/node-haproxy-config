@@ -45,6 +45,14 @@ export class Option {
     if (!this.type || !this.name)
       throw new OptionException.Uninitialized();
   }
+  
+  copy(): Option {
+    return Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this,
+      { parent: undefined }
+    );
+  }
 }
 
 export default Option;

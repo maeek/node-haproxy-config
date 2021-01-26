@@ -121,6 +121,7 @@ export class Section {
     options.forEach((option: Option) => {
       if (!(option instanceof Option)) throw new SectionException.UnsupportedType();
       if (option.unique && this.children[option.name]) throw new SectionException.TwoSameOptionsCannotCoexist();
+      if (option.parent) throw new SectionException.AlreadyParented();
       option.isInitialized();
 
       option.parent = this;
@@ -134,6 +135,7 @@ export class Section {
     this.isInitialized();
 
     options.forEach((option: Option) => {
+      if (!this.children[option.name]) throw new SectionException.OptionNotParented();
       this.children[option.name].parent = undefined;
       delete this.children[option.name];
     });
@@ -158,10 +160,27 @@ export class Section {
 
     if (newName.length === 0) throw new SectionException.InvalidName();
     if (newName.includes(' ')) throw new SectionException.InvalidName();
+    if (this.parent) {
+      if (this.parent.names.includes(newName)) throw new SectionException.InvalidName('Name is already taken in upper scope');
+    }
 
     this.name = newName;
 
     return this;
+  }
+
+  copy(): Section {
+    const copiedObject = Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this,
+      { parent: undefined, children: {} }
+    );
+
+    this.collection.forEach((child) => {
+      copiedObject.addItems(child.copy());
+    });
+
+    return copiedObject;
   }
 }
 
