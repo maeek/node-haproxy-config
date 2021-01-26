@@ -16,9 +16,21 @@ export class SectionNotParentedException extends Error {
   }
 }
 
-export class SectionInvalidNameException extends Error {
+export class SectionOptionNotParentedException extends Error {
   constructor() {
-    super('Section name includes invalid characters');
+    super('Option is no longer parented to this section');
+  }
+}
+
+export class SectionAlreadyParentedException extends Error {
+  constructor() {
+    super('Section is already parented, use SectionInstace.copy() to add the same section to a different config/collection');
+  }
+}
+
+export class SectionInvalidNameException extends Error {
+  constructor(additionalMessage = '') {
+    super('Section name includes invalid characters' + ' ' + additionalMessage);
   }
 }
 
@@ -43,6 +55,8 @@ export class SectionTwoSameOptionsCannotCoexistException extends Error {
 export default {
   UnsupportedType: SectionUnsupportedTypeException,
   NotParented: SectionNotParentedException,
+  OptionNotParented: SectionOptionNotParentedException,
+  AlreadyParented: SectionAlreadyParentedException,
   InvalidName: SectionInvalidNameException,
   MalformedInput: SectionMalformedInputException,
   Uninitialized: SectionUninitializedException,
