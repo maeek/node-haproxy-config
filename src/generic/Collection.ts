@@ -9,7 +9,7 @@ export class Collection {
   name?: string;
   parent?: Parent;
   type?: string;
-  private children: { [key: string]: Section } = {};
+  private children: Section[] = [];
 
   constructor(sections: Section[] = []) {
     this._initType(sections);
@@ -20,20 +20,24 @@ export class Collection {
       section.isInitialized();
 
       section.parent = this;
-      this.children[section.name] = section;
+      this.children.push(section);
     });
   }
 
-  get section(): { [key: string]: Section } {
+  get section(): Section[] {
+    return this.children;
+  }
+
+  get option(): Section[] {
     return this.children;
   }
 
   get collection(): Section[] {
-    return Object.values(this.children);
+    return this.children;
   }
 
   get names(): string[] {
-    return Object.keys(this.children);
+    return this.children.map((child) => child.name);
   }
 
   get json(): string {
@@ -48,7 +52,7 @@ export class Collection {
     return this._getOutput('raw');
   }
 
-  private _getOutput(type: 'json' | 'yaml' | 'raw'): string {
+  private _getOutput(type: 'json' | 'yaml' | 'raw'): string { // TODO: refactor
     let result = '';
 
     this.collection.forEach((section: Section) => {
@@ -66,7 +70,7 @@ export class Collection {
       if (!section.name) throw new CollectionException.EmptySection();
 
       section.parent = this;
-      this.children[section.name] = section;
+      this.children.push(section);
     });
 
     return this;
@@ -85,8 +89,10 @@ export class Collection {
     sections.forEach((section: Section) => {
       if (!section.name) throw new CollectionException.EmptySection();
 
-      this.children[section.name].parent = undefined;
-      delete this.children[section.name];
+      const index = this.children.indexOf(section);
+      
+      this.children[index].parent = undefined;
+      this.children.splice(index, 1);
     });
 
     return this;
