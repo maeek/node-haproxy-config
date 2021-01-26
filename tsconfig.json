@@ -15,7 +15,7 @@
     "sourceMap": true,
     "removeComments": true,
     "experimentalDecorators": true,
-    "target": "esnext",
+    "target": "es6",
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -31,7 +31,8 @@
     "./src/**/*.d.ts",
   ],
   "exclude": [
-    "./src/__tests__",
+    "./src/**/tests",
+    "./src/**/*.test.ts",
     "./src/setup-tests.ts",
     "./src/load-vars.ts",
   ]
