@@ -4,7 +4,7 @@ import Section from '../Section';
 
 const ParentMock = {
   addItems(item: Collection) {
-    item.parent = this as any;
+    item.parent = this as never;
     return this;
   },
   removeItems( item: Collection ) {

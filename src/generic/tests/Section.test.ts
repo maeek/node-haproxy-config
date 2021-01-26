@@ -10,7 +10,7 @@ import Option from '../Option';
 
 const ParentMock = {
   addItems(item: Section) {
-    item.parent = this as any;
+    item.parent = this as never;
     return this;
   },
   removeItems( item: Section ) {
