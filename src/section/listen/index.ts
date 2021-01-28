@@ -4,6 +4,7 @@ import Section from '../../generic/Section';
 import { allowedOptionKeys } from './const';
 
 export class Listen extends Section {
+  static readonly sectionType = 'listen';
   static readonly allowedOptions = allowedOptionKeys;
 
   constructor(name: string, options: Option[] = []) {
@@ -14,7 +15,7 @@ export class Listen extends Section {
 
   addItems(...options: Option[]): Listen {
     options.forEach((option: Option) => {
-      if (!Listen.allowedOptions.includes(option.type)) throw new SectionException.UnsupportedOption('listen', option.type);
+      if (!Listen.allowedOptions.includes(option.type)) throw new SectionException.UnsupportedOption(Listen.sectionType, option.type);
 
       super.addItems(option);
     });

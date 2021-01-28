@@ -4,6 +4,7 @@ import Section from '../../generic/Section';
 import { allowedOptionKeys } from './const';
 
 export class Frontend extends Section {
+  static readonly sectionType = 'frontend';
   static readonly allowedOptions = allowedOptionKeys;
 
   constructor(name: string, options: Option[] = []) {
@@ -14,7 +15,7 @@ export class Frontend extends Section {
 
   addItems(...options: Option[]): Frontend {
     options.forEach((option: Option) => {
-      if (!Frontend.allowedOptions.includes(option.type)) throw new SectionException.UnsupportedOption('frontend', option.type);
+      if (!Frontend.allowedOptions.includes(option.type)) throw new SectionException.UnsupportedOption(Frontend.sectionType, option.type);
 
       super.addItems(option);
     });

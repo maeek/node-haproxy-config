@@ -6,6 +6,7 @@ import { allowedOptionKeys } from './const';
 
 // TODO: defaults should propagate options to all sections that are below it
 export class Defaults extends Section {
+  static readonly sectionType = 'Defaults';
   static readonly allowedOptions = allowedOptionKeys;
 
   constructor(name?: string, options: Option[] = []) {
@@ -16,7 +17,7 @@ export class Defaults extends Section {
 
   addItems(...options: Option[]): Defaults {
     options.forEach((option: Option) => {
-      if (!Defaults.allowedOptions.includes(option.type)) throw new SectionException.UnsupportedOption('defaults', option.type);
+      if (!Defaults.allowedOptions.includes(option.type)) throw new SectionException.UnsupportedOption(Defaults.sectionType, option.type);
 
       super.addItems(option);
     });
