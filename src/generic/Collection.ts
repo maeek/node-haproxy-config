@@ -1,38 +1,38 @@
 import CollectionException from '../errors/Collection';
-import Section from './Section';
 
 interface Parent {
-  removeItems: (element: Collection) => void;
+  removeItems: (element: Collection<any>) => void;
 }
 
-export class Collection {
+
+export class Collection<T extends GenericCollectionChild> implements GenericCollection<Parent, T> {
   name?: string;
   parent?: Parent;
   type?: string;
-  private children: Section[] = [];
+  private children: T[] = [];
 
-  constructor(sections: Section[] = []) {
-    this._initType(sections);
+  constructor(children: T[] = []) {
+    this._initType(children);
+    if (children.length === 0) throw new CollectionException.UnsupportedType();
 
-    sections.forEach((section: Section) => {
-      if (this.type !== section.type) throw new CollectionException.NotSameTypes();
-      if (!(section instanceof Section)) throw new CollectionException.UnsupportedType();
-      section.isInitialized();
+    children.forEach((child: T) => {
+      if (this.type !== child.type) throw new CollectionException.NotSameTypes();
+      child.isInitialized();
 
-      section.parent = this;
-      this.children.push(section);
+      child.parent = this;
+      this.children.push(child);
     });
   }
 
-  get section(): Section[] {
+  get section(): T[] {
     return this.children;
   }
 
-  get option(): Section[] {
+  get option(): T[] {
     return this.children;
   }
 
-  get collection(): Section[] {
+  get collection(): T[] {
     return this.children;
   }
 
@@ -55,41 +55,41 @@ export class Collection {
   private _getOutput(type: 'json' | 'yaml' | 'raw'): string { // TODO: refactor
     let result = '';
 
-    this.collection.forEach((section: Section) => {
-      result += section[type];
+    this.collection.forEach((child: T) => {
+      result += child[type];
     });
 
     return result;
   }
 
-  addItems(...sections: Section[]): Collection {
-    this._initType(sections);
+  addItems(...children: T[]): Collection<T> {
+    this._initType(children);
 
-    sections.forEach((section: Section) => {
-      if (this.type !== section.type) throw new CollectionException.NotSameTypes();
-      if (!section.name) throw new CollectionException.EmptySection();
+    children.forEach((child: T) => {
+      if (this.type !== child.type) throw new CollectionException.NotSameTypes();
+      if (!child.name) throw new CollectionException.EmptySection();
 
-      section.parent = this;
-      this.children.push(section);
+      child.parent = this;
+      this.children.push(child);
     });
 
     return this;
   }
 
-  private _initType(sections: Section[]): void {
+  private _initType(children: T[]): void {
     if (!this.type) {
-      if (!(sections[0] instanceof Section)) throw new CollectionException.UnsupportedType();
+      // if (!(children[0] instanceof T)) throw new CollectionException.UnsupportedType();
 
-      this.type = sections[0] ? sections[0].type : undefined;
-      this.name = sections[0] ? sections[0].type : undefined;
+      this.type = children[0] ? children[0].type : undefined;
+      this.name = children[0] ? children[0].type : undefined;
     }
   }
 
-  removeItems(...sections: Section[]): Collection {
-    sections.forEach((section: Section) => {
-      if (!section.name) throw new CollectionException.EmptySection();
+  removeItems(...children: T[]): Collection<T> {
+    children.forEach((child: T) => {
+      if (!child.name) throw new CollectionException.EmptySection();
 
-      const index = this.children.indexOf(section);
+      const index = this.children.indexOf(child);
       
       this.children[index].parent = undefined;
       this.children.splice(index, 1);
@@ -109,6 +109,8 @@ export class Collection {
   toString(): string {
     return this.raw;
   }
+
+  // copy(): Collection
 }
 
 export default Collection;

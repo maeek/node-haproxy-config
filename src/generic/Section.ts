@@ -3,88 +3,14 @@ import SectionException from '../errors/Section';
 import Collection from './Collection';
 import Option from './Option';
 
-interface Children {
-  [key: string]: Option;
-}
+type Parent = Collection<Section> | Config;
+type Children = GenericSectionChildren<Option>;
 
-export class Section {
-  name: string;
-  type: string;
-  parent?: Collection | Config;
-  private children: Children = {};
-
-  constructor(type: string, name: string, options: Option[] = []) {
-    this.type = type;
-    this.name = name;
-
-    this.addItems(...options);
-  }
-
-  get option(): Children {
-    this.isInitialized();
-
-    return this.children;
-  }
-
-  get collection(): Option[] {
-    this.isInitialized();
-
-    return Object.values(this.children);
-  }
-
-  get names(): string[] {
-    this.isInitialized();
-
-    return Object.keys(this.children);
-  }
-
-  get json(): string {
-    return '';
-    // return this._getOutput('json');
-  }
-
-  get yaml(): string {
-    return '';
-    // return this._getOutput('yaml');
-  }
-
-  get raw(): string {
-    this.isInitialized();
-    
-    let result = `${this.type}${this.type !== this.name ? ` ${this.name}` : ''}\n`;
-    
-    this.collection.forEach((option: Option) => {
-      result += option.raw;
-      result += '\n';
-    });
-
-    result += '\n';
-
-    return result;
-  }
-
-  // private _getOutput(type: 'json' | 'yaml' | 'raw'): string {
-  //   this.isInitialized();
-    
-  //   let result = `${this.type}${this.type !== this.name ? ' ' + this.name : ''}\n`;
-    
-  //   this.collection.forEach((option: Option) => {
-  //     result += option[type];
-  //     result += '\n';
-  //   });
-    
-  //   return result;
-  // }
-  
-  isInitialized(): void {
-    if (!this.type || !this.name)
-      throw new SectionException.Uninitialized();
-  }
-
+class GenericSectionStatic {
   static from(str: string): Section {
     // Clean str
     const values = str.split('\n');
-    const {name, type} = Section._parseHeader(values[0]);
+    const {name, type} = GenericSectionStatic._parseHeader(values[0]);
 
     return new Section(type, name);
   }
@@ -113,6 +39,67 @@ export class Section {
     });
 
     return result;
+  }
+}
+
+export class Section extends GenericSectionStatic implements GenericSection<Section, Option> {
+  name: string;
+  type: string;
+  parent?: Parent;
+  protected children: Children = {};
+
+  constructor(type: string, name: string, options: Option[] = []) {
+    super();
+    this.type = type;
+    this.name = name;
+
+    this.addItems(...options);
+  }
+
+  get option(): Children {
+    this.isInitialized();
+
+    return this.children;
+  }
+
+  get collection(): Option[] {
+    this.isInitialized();
+
+    return Object.values(this.children);
+  }
+
+  get names(): string[] {
+    this.isInitialized();
+
+    return Object.keys(this.children);
+  }
+
+  get json(): string {
+    return '';
+  }
+
+  get yaml(): string {
+    return '';
+  }
+
+  get raw(): string {
+    this.isInitialized();
+    
+    let result = `${this.type}${this.type !== this.name ? ` ${this.name}` : ''}\n`;
+    
+    this.collection.forEach((option: Option) => {
+      result += option.raw;
+      result += '\n';
+    });
+
+    result += '\n';
+
+    return result;
+  }
+  
+  isInitialized(): void {
+    if (!this.type || !this.name)
+      throw new SectionException.Uninitialized();
   }
 
   addItems(...options: Option[]): Section {

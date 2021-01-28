@@ -3,11 +3,11 @@ import Collection from '../Collection';
 import Section from '../Section';
 
 const ParentMock = {
-  addItems(item: Collection) {
+  addItems(item: Collection<Section>) {
     item.parent = this as never;
     return this;
   },
-  removeItems( item: Collection ) {
+  removeItems( item: Collection<Section>) {
     item.parent = undefined;
     return this;
   }
@@ -31,7 +31,7 @@ describe('generic/Collection', () => {
   });
 
   it('Initializes empty collection - throws error', () => {
-    expect(() => new Collection()).toThrowError(CollectionUnsupportedTypeException);
+    expect(() => new Collection<Section>()).toThrowError(CollectionUnsupportedTypeException);
   });
 
   it('Add items - addItems()', () => {

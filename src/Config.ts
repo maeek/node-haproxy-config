@@ -4,7 +4,7 @@ import ConfigException from './errors/Config';
 import SectionException from './errors/Section';
 import CollectionException from './errors/Collection';
 
-type ChildrenTypes = Section | Collection;
+type ChildrenTypes = Section | Collection<Section>;
 
 interface Children {
   [key: string]: ChildrenTypes;

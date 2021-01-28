@@ -1,15 +1,26 @@
 import OptionException from '../errors/Option';
+import Collection from './Collection';
 import Section from './Section';
 
-export class Option {
+type Parent = Section | Collection<Option>;
+
+class GenericOptionStatic {
+  static from(str: string): Option {
+    // TODO: parse from str
+    return new Option('generic', 'option');
+  }
+}
+
+export class Option extends GenericOptionStatic implements GenericOption<Option, Parent> {
   name: string;
   type: string;
-  parent?: Section;
+  parent?: Parent;
   initialized = false;
   unique?: boolean;
-  private value: any;
+  protected value: unknown;
 
-  constructor(type: string, value?: any, unique?: boolean) {
+  constructor(type: string, value?: unknown, unique?: boolean) {
+    super();
     this.initialized = true;
     this.type = type;
     this.name = type;
@@ -25,9 +36,6 @@ export class Option {
     }
   }
 
-  static from(str: string): Option {
-    return new Option('', '');
-  }
 
   get json(): string {
     return '';
