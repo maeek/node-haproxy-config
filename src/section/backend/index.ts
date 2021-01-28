@@ -15,7 +15,8 @@ export class Backend extends Section {
 
   addItems(...options: Option[]): Backend {
     options.forEach((option: Option) => {
-      if (!Backend.allowedOptions.includes(option.type)) throw new SectionException.UnsupportedOption(Backend.sectionType, option.type);
+      if (!Backend.allowedOptions.includes(option.type))
+        throw new SectionException.UnsupportedOption(Backend.sectionType, option.type);
 
       super.addItems(option);
     });

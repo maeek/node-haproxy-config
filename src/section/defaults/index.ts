@@ -17,7 +17,8 @@ export class Defaults extends Section {
 
   addItems(...options: Option[]): Defaults {
     options.forEach((option: Option) => {
-      if (!Defaults.allowedOptions.includes(option.type)) throw new SectionException.UnsupportedOption(Defaults.sectionType, option.type);
+      if (!Defaults.allowedOptions.includes(option.type))
+        throw new SectionException.UnsupportedOption(Defaults.sectionType, option.type);
 
       super.addItems(option);
     });

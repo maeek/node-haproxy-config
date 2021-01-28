@@ -13,10 +13,12 @@ export class Collection<T extends GenericCollectionChild> implements GenericColl
 
   constructor(children: T[] = []) {
     this._initType(children);
-    if (children.length === 0) throw new CollectionException.UnsupportedType();
+    if (children.length === 0)
+      throw new CollectionException.UnsupportedType();
 
     children.forEach((child: T) => {
-      if (this.type !== child.type) throw new CollectionException.NotSameTypes();
+      if (this.type !== child.type)
+        throw new CollectionException.NotSameTypes();
       child.isInitialized();
 
       child.parent = this;
@@ -66,8 +68,10 @@ export class Collection<T extends GenericCollectionChild> implements GenericColl
     this._initType(children);
 
     children.forEach((child: T) => {
-      if (this.type !== child.type) throw new CollectionException.NotSameTypes();
-      if (!child.name) throw new CollectionException.EmptySection();
+      if (this.type !== child.type)
+        throw new CollectionException.NotSameTypes();
+      if (!child.name)
+        throw new CollectionException.EmptySection();
 
       child.parent = this;
       this.children.push(child);
@@ -87,7 +91,8 @@ export class Collection<T extends GenericCollectionChild> implements GenericColl
 
   removeItems(...children: T[]): Collection<T> {
     children.forEach((child: T) => {
-      if (!child.name) throw new CollectionException.EmptySection();
+      if (!child.name)
+        throw new CollectionException.EmptySection();
 
       const index = this.children.indexOf(child);
       

@@ -106,9 +106,12 @@ export class Section extends GenericSectionStatic implements GenericSection<Sect
     this.isInitialized();
 
     options.forEach((option: Option) => {
-      if (!(option instanceof Option)) throw new SectionException.UnsupportedType();
-      if (option.unique && this.children[option.name]) throw new SectionException.TwoSameOptionsCannotCoexist();
-      if (option.parent) throw new SectionException.AlreadyParented();
+      if (!(option instanceof Option))
+        throw new SectionException.UnsupportedType();
+      if (option.unique && this.children[option.name])
+        throw new SectionException.TwoSameOptionsCannotCoexist();
+      if (option.parent)
+        throw new SectionException.AlreadyParented();
       option.isInitialized();
 
       option.parent = this;
@@ -148,7 +151,8 @@ export class Section extends GenericSectionStatic implements GenericSection<Sect
     if (newName.length === 0) throw new SectionException.InvalidName();
     if (newName.includes(' ')) throw new SectionException.InvalidName();
     if (this.parent) {
-      if (this.parent.names.includes(newName)) throw new SectionException.InvalidName('Name is already taken in upper scope');
+      if (this.parent.names.includes(newName))
+        throw new SectionException.InvalidName('Name is already taken in upper scope');
     }
 
     this.name = newName;

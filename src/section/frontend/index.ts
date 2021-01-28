@@ -15,7 +15,8 @@ export class Frontend extends Section {
 
   addItems(...options: Option[]): Frontend {
     options.forEach((option: Option) => {
-      if (!Frontend.allowedOptions.includes(option.type)) throw new SectionException.UnsupportedOption(Frontend.sectionType, option.type);
+      if (!Frontend.allowedOptions.includes(option.type))
+        throw new SectionException.UnsupportedOption(Frontend.sectionType, option.type);
 
       super.addItems(option);
     });

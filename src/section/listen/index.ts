@@ -15,7 +15,8 @@ export class Listen extends Section {
 
   addItems(...options: Option[]): Listen {
     options.forEach((option: Option) => {
-      if (!Listen.allowedOptions.includes(option.type)) throw new SectionException.UnsupportedOption(Listen.sectionType, option.type);
+      if (!Listen.allowedOptions.includes(option.type))
+        throw new SectionException.UnsupportedOption(Listen.sectionType, option.type);
 
       super.addItems(option);
     });
