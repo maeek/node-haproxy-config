@@ -13,7 +13,8 @@
     "test": "MODE=test jest",
     "test:watch": "MODE=test jest --watchAll",
     "eslint": "eslint ./src",
-    "eslint:fix": "eslint --fix ./src"
+    "eslint:fix": "eslint --fix ./src",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "",
