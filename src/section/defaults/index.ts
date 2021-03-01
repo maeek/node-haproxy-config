@@ -1,7 +1,7 @@
 import SectionException from '../../errors/Section';
 import Option from '../../generic/Option';
 import Section from '../../generic/Section';
-import { allowedOptionKeys } from './const';
+import { allowedOptionKeys, isSupportedInDefaults } from './const';
 
 
 // TODO: defaults should propagate options to all sections that are below it
@@ -17,7 +17,7 @@ export class Defaults extends Section {
 
   addItems(...options: Option[]): Defaults {
     options.forEach((option: Option) => {
-      if (!Defaults.allowedOptions.includes(option.type))
+      if (!isSupportedInDefaults(option.type))
         throw new SectionException.UnsupportedOption(Defaults.sectionType, option.type);
 
       super.addItems(option);

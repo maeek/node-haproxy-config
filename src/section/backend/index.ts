@@ -1,7 +1,7 @@
 import SectionException from '../../errors/Section';
 import Option from '../../generic/Option';
 import Section from '../../generic/Section';
-import { allowedOptionKeys } from './const';
+import { allowedOptionKeys, isSupportedInBackend } from './const';
 
 export class Backend extends Section {
   static readonly sectionType = 'backend';
@@ -15,7 +15,7 @@ export class Backend extends Section {
 
   addItems(...options: Option[]): Backend {
     options.forEach((option: Option) => {
-      if (!Backend.allowedOptions.includes(option.type))
+      if (!isSupportedInBackend(option.type))
         throw new SectionException.UnsupportedOption(Backend.sectionType, option.type);
 
       super.addItems(option);
