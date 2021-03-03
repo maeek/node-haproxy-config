@@ -1,11 +1,16 @@
 {
-  "name": "haproxy",
+  "name": "@maeek/node-haproxy-config",
   "type": "commonjs",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "",
-  "main": "build/index.js",
-  "types": "./src/typings.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maeek/node-haproxy-config.git"
+  },
   "scripts": {
+    "publish-package": "npm run build && node scripts/publish.js",
     "clean": "rm -rf ./build",
     "build": "MODE=production npm run clean; tsc",
     "start": "tsc && node build/index.js",
@@ -13,8 +18,7 @@
     "test": "MODE=test jest",
     "test:watch": "MODE=test jest --watchAll",
     "eslint": "eslint ./src",
-    "eslint:fix": "eslint --fix ./src",
-    "postinstall": "npm run build"
+    "eslint:fix": "eslint --fix ./src"
   },
   "keywords": [],
   "author": "",
@@ -32,5 +36,8 @@
     "eslint": "^7.14.0",
     "@typescript-eslint/eslint-plugin": "^4.8.2",
     "@typescript-eslint/parser": "^4.8.2"
+  },
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com"
   }
 }
