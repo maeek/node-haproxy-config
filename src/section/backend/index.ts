@@ -23,6 +23,10 @@ export class Backend extends Section {
 
     return this;
   }
+
+  get option(): { [key in keyof typeof allowedOptionKeys]: any } {
+    return this.children as { [key in keyof typeof allowedOptionKeys]: any };
+  }
 }
 
 export default Backend;

@@ -3,18 +3,20 @@ import Section from './generic/Section';
 import ConfigException from './errors/Config';
 import SectionException from './errors/Section';
 import CollectionException from './errors/Collection';
+import { Backend, Defaults, Frontend, Global, Listen } from './section';
 
-type ChildrenTypes = Section | Collection<Section>;
+type ChildrenTypes = Section | Backend | Frontend | Listen | Defaults | Global;
+type ChildrenCollectionTypes = Collection<ChildrenTypes>;
 
 interface Children {
-  [key: string]: ChildrenTypes;
+  [key: string]: ChildrenTypes | ChildrenCollectionTypes;
 }
 
 export class Config {
   // name: string;
   private children: Children = {};
 
-  constructor(sections: ChildrenTypes[] = []) {
+  constructor(sections: (ChildrenTypes | ChildrenCollectionTypes)[] = []) {
     // this.name = name;
 
     this.addItems(...sections);
@@ -28,12 +30,14 @@ export class Config {
     return this.children;
   }
 
-  get collection(): ChildrenTypes[] {
+  get collection(): (ChildrenTypes | ChildrenCollectionTypes)[] {
     return Object.values(this.children);
   }
 
-  get json(): string {
-    return this._getOutput('json');
+  get json(): unknown {
+    const parsed = this.collection.map((ch) => ch.json);
+
+    return parsed;
   }
 
   get yaml(): string {
@@ -48,7 +52,7 @@ export class Config {
     
     let result = '';
     
-    this.collection.forEach((child: ChildrenTypes) => {
+    this.collection.forEach((child: ChildrenTypes | ChildrenCollectionTypes) => {
       result += child[type];
     });
     
@@ -59,8 +63,8 @@ export class Config {
     return new Config();
   }
 
-  addItems(...children: ChildrenTypes[]): Config {
-    children.forEach((child: ChildrenTypes) => {
+  addItems(...children: (ChildrenTypes | ChildrenCollectionTypes)[]): Config {
+    children.forEach((child: ChildrenTypes | ChildrenCollectionTypes) => {
       if (!(child instanceof Section) && !(child instanceof Collection)) throw new ConfigException.UnsupportedType();
       if (!child.type && child instanceof Section) throw new SectionException.Uninitialized();
       if (!child.type && child instanceof Collection) throw new CollectionException.EmptySection();
@@ -73,8 +77,8 @@ export class Config {
     return this;
   }
 
-  removeItems(...children: ChildrenTypes[]): Config {
-    children.forEach((child: ChildrenTypes) => {
+  removeItems(...children: (ChildrenTypes | ChildrenCollectionTypes)[]): Config {
+    children.forEach((child: ChildrenTypes | ChildrenCollectionTypes) => {
       child.parent = undefined;
       delete this.children[child.name as string];
     });

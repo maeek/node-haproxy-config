@@ -2,11 +2,13 @@ interface GenericCollectionChild {
   name: string;
   type: string;
   parent?: any;
-  json: string;
+  json: unknown;
   yaml: string;
   raw: string;
   isInitialized(): void;
 }
+
+export type TimeUnits = 'us' | 'ms' | 's' | 'm' | 'h' | 'd';
 
 interface GenericCollection<P, O extends GenericCollectionChild> {
   name?: string;
@@ -23,7 +25,7 @@ interface GenericSectionChildren<T> {
   [key: string]: T;
 }
 
-interface GenericSection<S, O> {
+interface GenericSection<S = unknown, O = unknown> {
   name: string;
   type: string;
   parent?: Collection<S> | Config;
@@ -32,7 +34,7 @@ interface GenericSection<S, O> {
   readonly collection: O[];
   readonly names: string[];
 
-  readonly json: string;
+  readonly json: unknown;
   readonly yaml: string;
   readonly raw: string;
 
@@ -49,14 +51,32 @@ interface GenericSection<S, O> {
 
 }
 
-interface GenericOption<S, P> {
+interface GenericOption<S = unknown, P = unknown> {
   name: string;
   type: string;
   parent?: P;
   initialized: boolean;
   unique?: boolean;
 
-  readonly json: string;
+  readonly json: unknown;
+  readonly yaml: string;
+  readonly raw: string;
+
+  isInitialized(): void;
+
+  addParameters?(...parameters: GenericParameter[]): GenericOption;
+  removeParameters?(...parameters: GenericParameter[]): GenericOption;
+
+  copy(): S;
+  remove(): void;
+}
+
+interface GenericParameter<S = unknown, P = unknown> {
+  type: string;
+  parent?: P;
+  initialized: boolean;
+
+  readonly json: unknown;
   readonly yaml: string;
   readonly raw: string;
 

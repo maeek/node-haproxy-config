@@ -1,3 +1,4 @@
+import { GenericSection, GenericSectionChildren } from '../@types/generics';
 import Config from '../Config';
 import SectionException from '../errors/Section';
 import Collection from './Collection';
@@ -21,12 +22,10 @@ class GenericSectionStatic {
     if (values.length !== 2) throw new SectionException.MalformedInput();
 
     const [type, name] = values;
-    const result = {
+    return {
       type,
       name
     };
-
-    return result;
   }
 
   static _parseOptions(str: string[]): Children {
@@ -74,8 +73,18 @@ export class Section extends GenericSectionStatic implements GenericSection<Sect
     return Object.keys(this.children);
   }
 
-  get json(): string {
-    return '';
+  get json(): unknown {
+    const parsed = this.collection.map((opt) => ({
+      type: opt.type,
+      ...opt.json as any
+    }));
+
+    return {
+      [this.name]: {
+        type: this.type,
+        options: parsed
+      }
+    };
   }
 
   get yaml(): string {

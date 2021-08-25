@@ -1,3 +1,4 @@
+import { GenericCollectionChild, GenericCollection } from '../@types/generics';
 import CollectionException from '../errors/Collection';
 
 interface Parent {
@@ -42,8 +43,8 @@ export class Collection<T extends GenericCollectionChild> implements GenericColl
     return this.children.map((child) => child.name);
   }
 
-  get json(): string {
-    return this._getOutput('json');
+  get json(): unknown {
+    return {};
   }
 
   get yaml(): string {

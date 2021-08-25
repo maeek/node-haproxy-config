@@ -10,7 +10,6 @@ export type SSLVer = 'SSLv3' | 'TLSv1.0' | 'TLSv1.1' | 'TLSv1.2' | 'TLSv1.3';
 export interface ServerOptions {
   name: string;
   address: string;
-  port: number;
   addr?: 'ipv4' | 'ipv6';
 
   'agent-check'?: boolean;
